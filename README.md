@@ -9,24 +9,33 @@ Parses and processes JSON documents.
 ### Example code
 ```c
 #include <stdio.h>
-#include "jsonparser.h"
+#include <stddef.h>
+#include <jsonparser.h>
 
 int main() {
-  char payload[100] = "{\"name\": \"John Doe\", \"city\": \"Istanbul\"}";
-  JsonKv* output;
+  char payload[100] = "{\"name\": \"John Doe\", \"city\": \"Istanbul\", \"age\": 20}";
+
+  json_t* output;
   size_t outputSize;
 
-  jsonParse(payload, strlen(payload), &output, &outputSize);
+  parse(payload, sizeof(payload), &output, &outputSize);
 
-  for (size_t x = 0; x < outputSize; x++) {
-      JsonKv data = output[x];
-      printf("[%zu.] Key: %s | Value: %s\n", x + 1, data.key, data.value);
-      free(data.key);
-      free(data.value);
+  printf("Output size: %lu\n", outputSize);
+
+  for (int x = 0; x < outputSize; x++) {
+    json_t data = output[x];
+
+    printf("[%i.] Key: %s", x + 1, data.key);
+
+    if (data.valueType == JSON_STRING) printf(" | Value: %s\n", (char*)data.value);
+ 
+    free(data.key);
+    free(data.value);
   }
 
   free(output);
 
   return 0;
 }
+
 ```

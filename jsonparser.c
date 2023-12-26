@@ -1,56 +1,55 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <jsonparser.h>
 
-#define MAX_JSON_KEYS 100
+void parse(char *payload, size_t payload_size, json_t **output, size_t *output_size) {
+  *output = malloc(MAX_JSON_KEYS * sizeof(json_t));
 
-typedef struct {
-    char* key;
-    char* value;
-} JsonKv;
+  int keyReaded = 0;
+  int valReaded = 0;
+  int i = 0;
 
-void jsonParse(char* payload, size_t payloadSize, JsonKv** output, size_t* outputSize) {
-    JsonKv* payloadLoaded = malloc(MAX_JSON_KEYS * sizeof(JsonKv));
+  while (i < payload_size) {
+    char str = payload[i];
 
-    int i = 0;
-    int readedKey = 0;
-    int readedValue = 0;
+    if (str == '"') {
+      int ix = i + 1;
 
-    while (i < payloadSize) {
-        if (payload[i] == '"') {
-            int j = i + 1;
-            int k = 0;
-            char* value = malloc(1 * sizeof(char));
+      if (keyReaded == valReaded) {
+        (*output)[keyReaded].key = malloc(1 * sizeof(char));
+      } else if (keyReaded > valReaded) {
+        (*output)[valReaded].value = malloc(1 * sizeof(char));
+      }
 
-            while (payload[j] != '"') {
-                value[k] = payload[j];
-                value = realloc(value, (k + 2) * sizeof(char));
-                j++;
-                k++;
-            }
+      while (payload[ix] != '"') {
+        if (keyReaded == valReaded) {
+          (*output)[keyReaded].key = realloc((*output)[keyReaded].key, (ix + 1) * sizeof(char));
+          (*output)[keyReaded].key[ix - i - 1] = payload[ix];
 
-            value[k] = '\0';
+          if (payload[ix + 1] == '"')
+            (*output)[keyReaded].key[ix - i] = 0;
+        } else if (keyReaded > valReaded) {
+          (*output)[valReaded].value = realloc((*output)[valReaded].value, (ix + 1) * sizeof(char));
 
-            if (readedKey == readedValue) {
-                payloadLoaded[readedKey].key = strdup(value);
-            }
-            else if (readedKey > readedValue) {
-                payloadLoaded[readedValue].value = strdup(value);
-                readedValue++;
-            }
+          ((char *)(*output)[valReaded].value)[ix - i - 1] = payload[ix];
 
-            free(value);
+          if (payload[ix + 1] == '"')
+            ((char *)(*output)[valReaded].value)[ix - i] = 0;
 
-            i = j;
-        }
-        else if (payload[i] == ':') {
-            readedKey++;
+          (*output)[valReaded].valueType = JSON_STRING;
         }
 
-        i++;
-        continue;
-    }
+        ix++;
+      }
 
-    *output = payloadLoaded;
-    *outputSize = readedValue;
+      if (keyReaded == valReaded)
+        keyReaded++;
+      else if (keyReaded > valReaded)
+        valReaded++;
+
+      i = ix;
+    } 
+
+    i++;
+  }
+
+  *output_size = keyReaded;
 }

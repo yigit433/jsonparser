@@ -26,16 +26,13 @@ int main() {
     json_t data = output[x];
 
     printf("[%i.] Key: %s", x + 1, data.key);
-
+    
     if (data.valueType == JSON_STRING) printf(" | Value: %s\n", (char*)data.value);
- 
-    free(data.key);
-    free(data.value);
+    else if (data.valueType == JSON_NUMBER) printf(" | Value: %lf\n", atof((char*)data.value));
   }
 
   free(output);
 
   return 0;
 }
-
 ```

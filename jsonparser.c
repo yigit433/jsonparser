@@ -32,7 +32,7 @@ void parse(char *payload, size_t payload_size, json_t **output, size_t *output_s
           ((char *)(*output)[valReaded].value)[ix - i - 1] = payload[ix];
 
           if (payload[ix + 1] == '"')
-            ((char *)(*output)[valReaded].value)[ix - i] = 0;
+            ((char *)(*output)[valReaded].value)[ix - i] = '\0';
 
           (*output)[valReaded].valueType = JSON_STRING;
         }
@@ -45,6 +45,33 @@ void parse(char *payload, size_t payload_size, json_t **output, size_t *output_s
       else if (keyReaded > valReaded)
         valReaded++;
 
+      i = ix;
+    } else if (atof(&str) != 0 || (atof(&str) == 0 && str == '0')) { 
+      int ix = i + 1;
+      int condition = 1;
+
+      char *data = malloc(1*sizeof(char));
+
+      data[0] = str;
+
+      while (condition == 1) {
+        char elem = payload[ix];
+
+        if (elem == '}' || elem == ',' || elem == ']' || elem == '}') {
+          condition = 0;
+
+          data[ix - i] = '\0';
+        } else {
+          data[ix - i] = elem;
+        }
+
+        ix++;
+      }
+
+      (*output)[keyReaded - 1].value = data;
+      (*output)[keyReaded - 1].valueType = JSON_NUMBER;
+
+      valReaded++;
       i = ix;
     } 
 

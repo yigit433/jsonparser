@@ -12,6 +12,7 @@ json_t read(char *payload, unsigned long long payload_size)
 
     if (payload[0] != '{' && payload[0] != '[') 
     {
+        free(entries);
         output.size = 0;
         output.entries = NULL;
 

@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := --warn-all --std=gnu99
+CFLAGS := --warn-all --std=c99
 
 .PHONY: compile clean
 

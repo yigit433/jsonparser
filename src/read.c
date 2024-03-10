@@ -1,6 +1,6 @@
 #include <json.h>
 
-json_t read(char *payload, unsigned long long payloadSize)
+json_t read(char *payload, unsigned long long payload_size)
 {
     json_entry_t *entries = malloc(MAX_JSON_KEYS * sizeof(json_entry_t));
     json_t output;
@@ -10,14 +10,15 @@ json_t read(char *payload, unsigned long long payloadSize)
 
     int i = 0;
 
-    if (payload[0] != '{' && payload[0] != '[')
+    if (payload[0] != '{' && payload[0] != '[') 
     {
         output.size = 0;
         output.entries = NULL;
+
         return output;
     }
 
-    while (i < payloadSize)
+    while (i < payload_size)
     {
         char *str = &payload[i];
 
@@ -52,7 +53,7 @@ json_t read(char *payload, unsigned long long payloadSize)
                     if (payload[ix + 1] == '"')
                         ((char *)entries[valReaded].value)[ix - i] = '\0';
 
-                    (entries)[valReaded].valueType = JSON_STRING;
+                    (entries)[valReaded].value_type = JSON_STRING;
                 }
                 ix++;
                 continue;

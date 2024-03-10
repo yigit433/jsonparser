@@ -19,7 +19,7 @@ typedef enum {
 typedef struct {
     char *key;
     void *value;
-    jvalue_t valueType;
+    jvalue_t value_type;
 } json_entry_t;
 
 typedef struct {
@@ -27,6 +27,6 @@ typedef struct {
     json_entry_t *entries;
 } json_t;
 
-json_t read(char *payload, unsigned long long payloadSize);
+json_t read(char *payload, unsigned long long payload_size);
 
 #endif

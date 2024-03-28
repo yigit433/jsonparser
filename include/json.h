@@ -1,3 +1,4 @@
+#include <jsonparser_utils.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -23,6 +24,7 @@ typedef struct {
 } json_entry_t;
 
 typedef struct {
+    unsigned int error;
     unsigned int size;
     json_entry_t *entries;
 } json_t;

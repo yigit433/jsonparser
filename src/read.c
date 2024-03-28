@@ -10,9 +10,10 @@ json_t read(char *payload, unsigned long long payload_size)
 
     int i = 0;
 
-    if (payload[0] != '{' && payload[0] != '[') 
+    if (payload[0] != '{' && payload[0] != '[')
     {
         free(entries);
+        output.error = 1;
         output.size = 0;
         output.entries = NULL;
 
@@ -66,6 +67,36 @@ json_t read(char *payload, unsigned long long payload_size)
                 valReaded++;
 
             i = ix;
+        }
+        else if (custom_atof(str, 1) != 0 || (custom_atof(str, 1) == 0 && *str == '0'))
+        {
+            char *readed = malloc(1 * sizeof(char));
+
+            int ix = i;
+            int condition = 1;
+
+            while (condition == 1)
+            {
+                if ((payload[ix] != ',' && payload[ix] != '}' && payload[ix] != ']') == 1)
+                {
+                    readed = realloc(readed, (ix - i + 1) * sizeof(char));
+                    readed[ix - i] = payload[ix];
+                }  else {
+                    readed[ix - i + 1] = '\0';
+                    condition = 0;
+                }
+
+                ix++;
+                continue;
+            }
+            i = ix;
+            
+            (entries)[valReaded].value = malloc(1 * sizeof(double));
+            *(double *)(entries)[valReaded].value = custom_atof(readed, strlen(readed));
+
+            (entries)[valReaded].value_type = JSON_NUMBER;
+
+            free(readed);
         }
 
         i++;

@@ -4,7 +4,7 @@ CFLAGS := --warn-all --std=c99
 .PHONY: compile clean
 
 compile:
-	$(CC) $(CFLAGS) tests/*.c src/*.c --include-directory=include --output=jsonparser
+	$(CC) $(CFLAGS) utils/*.c tests/*.c src/*.c --include-directory=include --output=jsonparser -lm
 
 clean:
 	rm jsonparser
